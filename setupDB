@@ -1,0 +1,45 @@
+import pypyodbc
+with open('.pw') as f:
+  password=f.read()
+connection = pypyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
+  'Server=pauldb.dbsprojects.ie;'
+  'Database=master;'
+  'encrypt=yes;'
+  'TrustServerCertificate=yes;'
+  'UID=sa;'
+  'PWD='+password,autocommit = True)
+
+cursor = connection.cursor()
+SQLCommand = ("CREATE DATABASE Student;")
+cursor.execute(SQLCommand)
+print('done')
+
+connection.close()
+
+connection = pypyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
+  'Server=pauldb.dbsprojects.ie;'
+  'Database=Student;'
+  'encrypt=yes;'
+  'TrustServerCertificate=yes;'
+  'UID=sa;'
+  'PWD='+password,autocommit = True)
+
+cursor = connection.cursor()
+SQLCommand = ("CREATE TABLE Student(ID INT IDENTITY(1,1), name VARCHAR(255), email VARCHAR(255);")
+cursor.execute(SQLCommand)
+SQLCommand = ('''
+              GO;
+              CREATE PROCEDURE uspInsertStudent @name,@email 
+              AS
+              INSERT INTO Students (name,email) VALUES (@name, @email);
+              GO;
+              ''')
+cursor.execute(SQLCommand)
+SQLCommand = ("{call uspInsertStudent('name', 'email')}")
+cursor.execute(SQLCommand)
+
+SQLCommand = ("SELECT * FROM Students;")
+cursor.execute(SQLCommand)
+results = cursor.fetchone()
+print('First result is Name:',results[1],'Email:',results[2])
+print('done')
