@@ -22,20 +22,20 @@ def add():
   name = request.args.get('name')
   email = request.args.get('email')
   cur = connection.cursor() #create a connection to the SQL instance
-  cursor.execute("{call uspInsertStudent(name, email)}")
+  cursor.execute("{call uspInsertUser(name, email)}")
   return '{"Result":"Success"}'
 
 @app.route("/") #Default - Show Data
 def hello(): # Name of the method
-  cur = mysql.connection.cursor() #create a connection to the SQL instance
-  cur.execute('''SELECT * FROM students''') # execute an SQL statment
+  cur = connection.cursor() #create a connection to the SQL instance
+  cur.execute('''SELECT * FROM Student''') # execute an SQL statment
   rv = cur.fetchall() #Retreive all rows returend by the SQL statment
   Results=[]
   for row in rv: #Format the Output Results and add to return string
     Result={}
-    Result['Name']=row[0].replace('\n',' ')
-    Result['Email']=row[1]
-    Result['ID']=row[2]
+    Result['Name']=row[1].replace('\n',' ')
+    Result['Email']=row[2]
+    Result['ID']=row[0]
     Results.append(Result)
   response={'Results':Results, 'count':len(Results)}
   ret=app.response_class(
